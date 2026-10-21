@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  background: #0A1A17;
+  color: #EEE8DD;
+  font-family: "Sora Variable", "Segoe UI", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, [data-selectable], [data-selectable] * {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+:focus-visible {
+  outline: 2px solid #BC955C;
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(238, 232, 221, 0.1); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(188, 149, 92, 0.4); }
+
+input[type="number"]::-webkit-inner-spin-button { opacity: 0.4; }
