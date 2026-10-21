@@ -11,6 +11,7 @@ import { RedactWorkspace } from "./components/RedactWorkspace";
 import { Button } from "./components/ui/Button";
 import { ToastContainer, useToasts } from "./components/Toast";
 import { api } from "./lib/api";
+import { telemetry } from "./lib/telemetry";
 import { fmt, fmtDuration } from "./lib/format";
 import type { AppInfo, FileEntry, Hit, Progress, RedactProgress, SearchResult } from "./types";
 
@@ -24,7 +25,15 @@ export default function App() {
   const [files, setFiles] = useState<FileEntry[]>([]);
   const [selected, setSelected] = useState<{ id: number; page: number } | null>(null);
   const [redactInitial, setRedactInitial] = useState<string[] | null>(null);
-  const { toasts, add: toast, remove: removeToast } = useToasts();
+  const { toasts, add, remove: removeToast } = useToasts();
+  // Todo aviso de error se reporta también al monitoreo de uso
+  const toast = useCallback(
+    (t: Parameters<typeof add>[0]) => {
+      if (t.type === "error") telemetry.error(t.title, t.message);
+      add(t);
+    },
+    [add]
+  );
   const searchSeq = useRef(0);
   const queryRef = useRef(query);
   queryRef.current = query;
@@ -133,7 +142,10 @@ export default function App() {
   const onlyApprox = !!showing && showing.data.hits.length > 0 && showing.data.hits.every((h) => h.exact_pages === 0 && h.kind !== "name");
 
   // Al elegir un documento se abre en su primera coincidencia
-  const open = (id: number) => setSelected({ id, page: hits.get(id)?.pages[0]?.page ?? 1 });
+  const open = (id: number) => {
+    telemetry.contar("ver_documento");
+    setSelected({ id, page: hits.get(id)?.pages[0]?.page ?? 1 });
+  };
   const setPage = useCallback((page: number) => setSelected((s) => (s ? { ...s, page } : s)), []);
 
   return (

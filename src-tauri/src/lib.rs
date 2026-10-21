@@ -478,6 +478,12 @@ async fn locate_matches(state: Shared<'_>, id: i64, page: usize, query: String) 
     Ok(matcher.map(|m| viewer::locate(&words, &m)).unwrap_or_default())
 }
 
+/// Nombre del equipo, para identificar desde dónde se usa el programa (monitoreo de uso).
+#[tauri::command]
+fn equipo() -> String {
+    ["COMPUTERNAME", "HOSTNAME"].iter().find_map(|v| std::env::var(v).ok()).unwrap_or_default()
+}
+
 #[tauri::command]
 async fn reveal_file(app: AppHandle, state: Shared<'_>, id: i64) -> Result<(), String> {
     let path = indexed_path(&state, id)?;
@@ -507,7 +513,8 @@ pub fn run() {
             start_analysis,
             redaction_page_image,
             apply_redaction,
-            open_redacted
+            open_redacted,
+            equipo
         ])
         .setup(|app| {
             let data_dir = app.path().app_local_data_dir()?;

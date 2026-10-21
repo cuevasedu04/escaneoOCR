@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Minus, Square, X } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { telemetry } from "../lib/telemetry";
 
 export function TitleBar({ badge }: { badge: ReactNode }) {
   const win = getCurrentWindow();
@@ -23,7 +24,7 @@ export function TitleBar({ badge }: { badge: ReactNode }) {
         <button aria-label="Maximizar" onClick={() => win.toggleMaximize()} className={`${btn} hover:bg-white/10 hover:text-ink`}>
           <Square size={11} />
         </button>
-        <button aria-label="Cerrar" onClick={() => win.close()} className={`${btn} hover:bg-guinda hover:text-white`}>
+        <button aria-label="Cerrar" onClick={() => void telemetry.cerrar().finally(() => win.close())} className={`${btn} hover:bg-guinda hover:text-white`}>
           <X size={15} />
         </button>
       </div>

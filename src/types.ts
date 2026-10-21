@@ -20,6 +20,8 @@ export interface Progress {
   unchanged: number;
   errors: number;
   ocr_pages: number;
+  /** Documentos de esta carga con al menos una página leída con OCR */
+  ocr_files?: number;
   current: string;
   elapsed_ms: number;
   message: string;

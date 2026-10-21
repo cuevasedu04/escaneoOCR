@@ -30,6 +30,8 @@ pub struct Progress {
     pub unchanged: usize,
     pub errors: usize,
     pub ocr_pages: usize,
+    /// Documentos de esta carga con al menos una página leída con OCR.
+    pub ocr_files: usize,
     pub current: String,
     pub elapsed_ms: u64,
     pub message: String,
@@ -191,7 +193,12 @@ fn index(
                 break;
             }
             match &extracted {
-                Ok(x) => p.ocr_pages += x.ocr_pages as usize,
+                Ok(x) => {
+                    p.ocr_pages += x.ocr_pages as usize;
+                    if x.ocr_pages > 0 {
+                        p.ocr_files += 1;
+                    }
+                }
                 Err(_) => p.errors += 1,
             }
             store(&mut conn, *existing, f, extracted)?;
